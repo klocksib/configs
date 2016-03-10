@@ -22,7 +22,6 @@
     coffee-mode
     csharp-mode
     deft
-    elpy
     erlang
     feature-mode
     flycheck
@@ -78,7 +77,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("38ba6a938d67a452aeb1dada9d7cdeca4d9f18114e9fc8ed2b972573138d4664" "badc4f9ae3ee82a5ca711f3fd48c3f49ebe20e6303bba1912d4e2d19dd60ec98" default))))
+    ("badc4f9ae3ee82a5ca711f3fd48c3f49ebe20e6303bba1912d4e2d19dd60ec98" "38ba6a938d67a452aeb1dada9d7cdeca4d9f18114e9fc8ed2b972573138d4664" default))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -150,6 +149,17 @@
       indent-tabs-mode nil)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
+;; Saving the world helpers
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; Window helpers
+(require 'windmove)
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings 'super))
+
+;; Line numbers
+(global-linum-mode t)
+
 (defun indent-buffer ()
   (interactive)
   (save-excursion
@@ -189,10 +199,10 @@
 (setq scheme-program-name "racket")
 
 ;; PYTHON
-(elpy-enable)
-(when (require 'flycheck nil t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
+;(elpy-enable)
+;(when (require 'flycheck nil t)
+;  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;  (add-hook 'elpy-mode-hook 'flycheck-mode))
 
 ;; Exit
 (provide 'init)

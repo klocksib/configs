@@ -12,7 +12,8 @@
 ;; -----------------------------------------------------------------------------
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
+             '("elpy" . "https://jorgenschaefer.github.io/packages/")
+             '("melpa" . "http://melpa.org/packages/"))
 (when (< emacs-major-version 24)
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
@@ -22,6 +23,7 @@
     coffee-mode
     csharp-mode
     deft
+    elpy
     erlang
     feature-mode
     flycheck
@@ -64,11 +66,11 @@
     (package-install pkg)))
 
 ;; upgrade installed
-(save-window-excursion
-  (package-list-packages t)
-  (package-menu-mark-upgrades)
-  (package-menu-execute t)
-  (message "%s" "Updating packages."))
+;(save-window-excursion
+;  (package-list-packages t)
+;  (package-menu-mark-upgrades)
+;  (package-menu-execute t)
+;  (message "%s" "Updating packages."))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -77,7 +79,10 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("badc4f9ae3ee82a5ca711f3fd48c3f49ebe20e6303bba1912d4e2d19dd60ec98" "38ba6a938d67a452aeb1dada9d7cdeca4d9f18114e9fc8ed2b972573138d4664" default))))
+    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c567c85efdb584afa78a1e45a6ca475f5b55f642dfcd6277050043a568d1ac6f" "a164837cd2821475e1099911f356ed0d7bd730f13fa36907895f96a719e5ac3e" "78f614a58e085bd7b33809e98b6f1a5cdd38dae6257e48176ce21424ee89d058" "f3d6a49e3f4491373028eda655231ec371d79d6d2a628f08d5aa38739340540b" "6c62b1cd715d26eb5aa53843ed9a54fc2b0d7c5e0f5118d4efafa13d7715c56e" "0c311fb22e6197daba9123f43da98f273d2bfaeeaeb653007ad1ee77f0003037" "ad950f1b1bf65682e390f3547d479fd35d8c66cafa2b8aa28179d78122faa947" "3d5ef3d7ed58c9ad321f05360ad8a6b24585b9c49abcee67bdcbb0fe583a6950" "badc4f9ae3ee82a5ca711f3fd48c3f49ebe20e6303bba1912d4e2d19dd60ec98" "38ba6a938d67a452aeb1dada9d7cdeca4d9f18114e9fc8ed2b972573138d4664" default)))
+ '(package-selected-packages
+   (quote
+    (zenburn-theme yaml-mode writegood-mode web-mode sublime-themes solarized-theme sly rvm puppet-mode php-mode nodejs-repl noctilux-theme monokai-theme molokai-theme markdown-mode magit json-mode htmlize haskell-mode gruvbox-theme graphviz-dot-mode go-mode gist geiser flycheck-pyflakes flycheck-perl6 flycheck-ocaml flycheck-clangcheck feature-mode erlang deft csharp-mode coffee-mode clojure-mode ample-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -93,12 +98,12 @@
 (show-paren-mode t)
 (global-flycheck-mode t)
 (setq indicate-empty-lines t)
-(load-theme 'monokai)
+(load-theme 'gruvbox)
 
 (cond ((eq system-type 'darwin)
        (message "%s" "Loading OSX specific settings.")
        (setq ns-use-srgb-colorspace t)
-       (set-frame-font "Menlo 11"))
+       (set-frame-font "Fira Code 11"))
       ((or
         (eq system-type 'gnu/linux)
         (eq system-type 'berkeley-unix))
@@ -166,7 +171,7 @@
     (indent-region (point-min) (point-max) nil)))
 (global-set-key [f12] 'indent-buffer)
 
-(setq tramp-default-method "ssh")
+;(setq tramp-default-method "ssh")
 
 
 ;; FILE BACKUP SETTINGS
@@ -187,7 +192,7 @@
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdown$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
-(add-to-list 'auto-mode-alist '("^sudoers" . conf-mode))
+(add-to-list 'auto-mode-alist '("sudoers.*$" . conf-mode))
 
 ;; PERL
 (defalias 'perl-mode 'cperl-mode)
@@ -199,10 +204,11 @@
 (setq scheme-program-name "racket")
 
 ;; PYTHON
-;(elpy-enable)
-;(when (require 'flycheck nil t)
-;  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-;  (add-hook 'elpy-mode-hook 'flycheck-mode))
+(elpy-enable)
+(setq elpy-rpc-python-command "/usr/local/Cellar/python3/3.5.2_1/bin/python3")
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
 
 ;; Exit
 (provide 'init)

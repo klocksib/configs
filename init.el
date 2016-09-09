@@ -10,9 +10,25 @@
 
 ;; PACKAGES
 ;; -----------------------------------------------------------------------------
+
+(cond ((eq system-type 'darwin)
+       (message "%s" "Loading OSX specific settings.")
+       (setq ns-use-srgb-colorspace t)
+       (set-frame-font "Fira Code 11"))
+      ((or
+        (eq system-type 'gnu/linux)
+        (eq system-type 'berkeley-unix))
+       (message "%s" "Loading Linux and BSD specific settings.")
+       (setq select-enable-clipboard t)
+       (set-frame-font "Ubuntu Mono 10"))
+      ((or
+        (eq system-type 'windows-nt)
+        (eq system-type 'cygwin))
+       (message "%s" "Loading Windows specific settings.")
+       (set-frame-font "Consolas 10")))
+
 (require 'package)
 (add-to-list 'package-archives
-             '("elpy" . "https://jorgenschaefer.github.io/packages/")
              '("melpa" . "http://melpa.org/packages/"))
 (when (< emacs-major-version 24)
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
@@ -24,7 +40,6 @@
     csharp-mode
     deft
     elpy
-    erlang
     feature-mode
     flycheck
     flycheck-pyflakes
@@ -38,6 +53,7 @@
     haskell-mode
     htmlize
     json-mode
+    keychain-environment
     magit
     markdown-mode
     nodejs-repl
@@ -58,6 +74,7 @@
     sublime-themes
     zenburn-theme))
 
+;; refresh list of packages and install if they are not
 (message "%s" "Refreshing package database...")
 (package-refresh-contents)
 (message "%s" "Updating or installing newly specified packages...")
@@ -66,81 +83,25 @@
     (package-install pkg)))
 
 ;; upgrade installed
-;(save-window-excursion
-;  (package-list-packages t)
-;  (package-menu-mark-upgrades)
-;  (package-menu-execute t)
-;  (message "%s" "Updating packages."))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c567c85efdb584afa78a1e45a6ca475f5b55f642dfcd6277050043a568d1ac6f" "a164837cd2821475e1099911f356ed0d7bd730f13fa36907895f96a719e5ac3e" "78f614a58e085bd7b33809e98b6f1a5cdd38dae6257e48176ce21424ee89d058" "f3d6a49e3f4491373028eda655231ec371d79d6d2a628f08d5aa38739340540b" "6c62b1cd715d26eb5aa53843ed9a54fc2b0d7c5e0f5118d4efafa13d7715c56e" "0c311fb22e6197daba9123f43da98f273d2bfaeeaeb653007ad1ee77f0003037" "ad950f1b1bf65682e390f3547d479fd35d8c66cafa2b8aa28179d78122faa947" "3d5ef3d7ed58c9ad321f05360ad8a6b24585b9c49abcee67bdcbb0fe583a6950" "badc4f9ae3ee82a5ca711f3fd48c3f49ebe20e6303bba1912d4e2d19dd60ec98" "38ba6a938d67a452aeb1dada9d7cdeca4d9f18114e9fc8ed2b972573138d4664" default)))
- '(package-selected-packages
-   (quote
-    (zenburn-theme yaml-mode writegood-mode web-mode sublime-themes solarized-theme sly rvm puppet-mode php-mode nodejs-repl noctilux-theme monokai-theme molokai-theme markdown-mode magit json-mode htmlize haskell-mode gruvbox-theme graphviz-dot-mode go-mode gist geiser flycheck-pyflakes flycheck-perl6 flycheck-ocaml flycheck-clangcheck feature-mode erlang deft csharp-mode coffee-mode clojure-mode ample-theme))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
+(save-window-excursion
+  (package-list-packages t)
+  (package-menu-mark-upgrades)
+  (package-menu-execute t)
+  (message "%s" "Updating packages."))
 
 ;; GUI SETTINGS
 ;; -----------------------------------------------------------------------------
 (tool-bar-mode -1)
 (display-time)
 (show-paren-mode t)
-(global-flycheck-mode t)
+;;(global-flycheck-mode t)
 (setq indicate-empty-lines t)
-(load-theme 'gruvbox)
 
-(cond ((eq system-type 'darwin)
-       (message "%s" "Loading OSX specific settings.")
-       (setq ns-use-srgb-colorspace t)
-       (set-frame-font "Fira Code 11"))
-      ((or
-        (eq system-type 'gnu/linux)
-        (eq system-type 'berkeley-unix))
-       (message "%s" "Loading Linux and BSD specific settings.")
-       (setq select-enable-clipboard t)
-       (set-frame-font "Ubuntu Mono 11"))
-      ((or
-        (eq system-type 'windows-nt)
-        (eq system-type 'cygwin))
-       (message "%s" "Loading Windows specific settings.")
-       (set-frame-font "Consolas 10")))
+(setq custom-safe-themes t)
+(load-theme 'monokai)
 
 (when window-system
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
-
-(let ((alist '((33 . ".\\(?:\\(?:==\\)\\|[!=]\\)")
-               (35 . ".\\(?:[(?[_{]\\)")
-               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-               (42 . ".\\(?:\\(?:\\*\\*\\)\\|[*/]\\)")
-               (43 . ".\\(?:\\(?:\\+\\+\\)\\|\\+\\)")
-               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=]\\)")
-               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-               (58 . ".\\(?:[:=]\\)")
-               (59 . ".\\(?:;\\)")
-               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[/<=>|-]\\)")
-               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-               (63 . ".\\(?:[:=?]\\)")
-               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-               (94 . ".\\(?:=\\)")
-               (123 . ".\\(?:-\\)")
-               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-               (126 . ".\\(?:[=@~-]\\)"))))
-  (dolist (char-regexp alist)
-    (set-char-table-range composition-function-table (car char-regexp)
-                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
 
 ;; GENERAL SETTINGS
 ;; -----------------------------------------------------------------------------
@@ -171,7 +132,10 @@
     (indent-region (point-min) (point-max) nil)))
 (global-set-key [f12] 'indent-buffer)
 
-;(setq tramp-default-method "ssh")
+;; TRAMP mode
+(require 'keychain-environment)
+(keychain-refresh-environment)
+(setq tramp-default-method "ssh")
 
 
 ;; FILE BACKUP SETTINGS
@@ -198,18 +162,30 @@
 (defalias 'perl-mode 'cperl-mode)
 
 ;; COMMON LISP
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
-
-;; SCHEME
+(setq inferior-lisp-program "/usr/bin/sbcl")
 (setq scheme-program-name "racket")
 
 ;; PYTHON
-(elpy-enable)
-(setq elpy-rpc-python-command "/usr/local/Cellar/python3/3.5.2_1/bin/python3")
-(when (require 'flycheck nil t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
+;(elpy-enable)
+;(setq elpy-rpc-python-command "/usr/local/Cellar/python3/3.5.2_1/bin/python3")
+;(when (require 'flycheck nil t)
+;  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;  (add-hook 'elpy-mode-hook 'flycheck-mode))
 
 ;; Exit
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("a800120841da457aa2f86b98fb9fd8df8ba682cebde033d7dbf8077c1b7d677a" "80aca613e13b40f3ffe6a8ce471c6388b93e5f026fe35ac9925c5fb84405a47a" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
